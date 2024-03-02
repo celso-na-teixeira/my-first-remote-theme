@@ -8,9 +8,7 @@ export default apiInitializer("1.8.0", (api) => {
 
   api.modifyClass("component:modal/create-account", {
     didInsertElement: function(){
-        api.formatUsername((username) => {
-            return username.replace(/\d+$/, "");
-          });
+        console.log(username);
     }     
 });
 
