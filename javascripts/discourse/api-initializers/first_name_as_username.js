@@ -4,13 +4,6 @@ import User from "discourse/models/user";
 export default apiInitializer("1.8.0", (api) => {
   const siteSettings = api.container.lookup("service:site-settings");
 
-  if (
-    !siteSettings.full_name_required ||
-    !siteSettings.prioritize_username_in_ux
-  ) {
-    return;
-  }
-
   // Removes the number at the end of string
   api.formatUsername((username) => {
     return username.replace(/\d+$/, "");
