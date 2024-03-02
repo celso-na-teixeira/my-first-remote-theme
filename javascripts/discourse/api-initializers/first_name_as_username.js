@@ -4,5 +4,6 @@ import discourseDebounce from "discourse-common/lib/debounce";
 import { observes } from "discourse-common/utils/decorators";
 
 export default apiInitializer("1.8.0", (api) => {
-  console.log("Hello World!");
+  const result = await User.checkUsername(null, this.accountEmail);
+  console.log(result);
 });
