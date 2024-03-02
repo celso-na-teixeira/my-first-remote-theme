@@ -16,9 +16,12 @@ export default apiInitializer("1.8.0", (api) => {
     prefillUsername() {
       // do nothing.
     },
-
+    
+    @observes("model.accountEmail", "model.accountUsername")
     prefillAndFormatUsername() {
+      console.log('prefillAndFormatUsername');
       if (this.prefilledUsername) {
+        console.log(this.prefilledUsernam);
         if (this.model.accountUsername === this.prefilledUsername) {
           this.set("model.accountUsername", "");
         }
@@ -26,7 +29,7 @@ export default apiInitializer("1.8.0", (api) => {
       }
 
       if (this.get("nameValidation.ok")) {
-        const name = this.accountName.trim().split(/\s/)[0];
+        const name = this.accountUsername.trim().split(/\s/)[0];
         if (!name.length) {
           return;
         }
