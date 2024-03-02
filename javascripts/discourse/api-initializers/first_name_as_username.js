@@ -8,11 +8,12 @@ export default apiInitializer("1.8.0", (api) => {
 
   api.modifyClass("component:modal/create-account", {
     didInsertElement: function(){
-        console.log(username);
-  });
-  });
+        api.formatUsername((username) => {
+            return username.replace(/\d+$/, "");
+          });
     }     
 });
+
 
   // Prefilling the username based on the first name
 /*  api.modifyClass("component:modal/create-account", {
@@ -22,7 +23,7 @@ export default apiInitializer("1.8.0", (api) => {
       // do nothing.
     },
 
-/*    @observes("model.accountEmail", "model.accountUsername")
+    @observes("model.accountEmail", "model.accountUsername")
     prefillUsernameFromName() {
       if (this.prefilledUsername) {
         if (this.model.accountUsername === this.prefilledUsername) {
@@ -55,6 +56,8 @@ export default apiInitializer("1.8.0", (api) => {
           500
         );
       }
-    },*/
-  });*/
+    },
+  });
+  */
+
 });
