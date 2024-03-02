@@ -6,7 +6,7 @@ import { observes } from "discourse-common/utils/decorators";
 export default apiInitializer("1.8.0", (api) => {
     api.modifyClass("component:modal/create-account", {
         didInsertElement: function(){
-            var nameValue = document.getElementById('new-account-name').value;
+            var nameValue = document.getElementById('new-account-username').value;
             var formattedName = nameValue.split(' ').slice(0, -1).join(' ');
             document.getElementById('new-account-username').value = formattedName;
         }     
