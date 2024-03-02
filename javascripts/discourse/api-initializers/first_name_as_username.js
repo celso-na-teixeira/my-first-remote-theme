@@ -6,11 +6,6 @@ import { observes } from "discourse-common/utils/decorators";
 export default apiInitializer("1.8.0", (api) => {
   const siteSettings = api.container.lookup("service:site-settings");
 
-  // Rremoves the number at the end of string
-  api.formatUsername((username) => {
-    return username.split(''_)[0];
-  });
-
   api.modifyClass("component:modal/create-account", {
     didInsertElement: function(){
         api.formatUsername((username) => {
