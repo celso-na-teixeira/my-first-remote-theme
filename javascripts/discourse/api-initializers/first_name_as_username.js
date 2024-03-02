@@ -6,15 +6,9 @@ import { observes } from "discourse-common/utils/decorators";
 export default apiInitializer("1.8.0", (api) => {
   const siteSettings = api.container.lookup("service:site-settings");
 
-  api.modifyClass("component:modal/create-account", {
-    didInsertElement: function(){
-        console.log(username);
-    }     
-});
-
 
   // Prefilling the username based on the first name
-/*  api.modifyClass("component:modal/create-account", {
+  api.modifyClass("component:modal/create-account", {
     pluginId: "display-first-name-only",
 
     prefillUsername() {
@@ -24,12 +18,13 @@ export default apiInitializer("1.8.0", (api) => {
     @observes("model.accountEmail", "model.accountUsername")
     prefillUsernameFromName() {
       if (this.prefilledUsername) {
+          console.log(this.model.accountUsername)
         if (this.model.accountUsername === this.prefilledUsername) {
           this.set("model.accountUsername", "");
         }
         this.set("prefilledUsername", null);
       }
-      if (this.get("nameValidation.ok")) {
+      /* if (this.get("nameValidation.ok")) {
         discourseDebounce(
           this,
           async () => {
@@ -53,9 +48,8 @@ export default apiInitializer("1.8.0", (api) => {
           },
           500
         );
-      }
+      } */
     },
   });
-  */
 
 });
