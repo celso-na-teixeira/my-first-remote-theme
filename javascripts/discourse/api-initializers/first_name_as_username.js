@@ -6,11 +6,33 @@ import { observes } from "discourse-common/utils/decorators";
 export default apiInitializer("1.8.0", (api) => {
     api.modifyClass("component:modal/create-account", {
         didInsertElement: function(){
-             setTimeout(function () {
-               var nameValue = document.getElementById('new-account-username').value;
-               var formattedName = nameValue.split('_')[0];
-               document.getElementById('new-account-username').value = formattedName;
-    }, 500);
+             if (this.get("nameValidation.ok")) {
+                 
+  const name = this.accountName.trim().split(/\s/)[0];
+  
+  if (name.length) {
+    // Assuming User.checkUsername returns a Promise
+    User.checkUsername(name, this.accountEmail)
+      .then((result) => {
+        if (result.suggestion) {
+          this.setProperties({
+            accountUsername: result.suggestion,
+            prefilledUsername: result.suggestion,
+          });
+        } else {
+          this.setProperties({
+            accountUsername: name,
+            prefilledUsername: name,
+          });
+        }
+      })
+      .catch((error) => {
+        // Handle error if needed
+        console.error(error);
+      });
+  }
+}
+
             
         }     
     });
