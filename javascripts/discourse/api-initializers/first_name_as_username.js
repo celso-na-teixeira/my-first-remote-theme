@@ -1,55 +1,69 @@
-import { apiInitializer } from "discourse/lib/api";
+import EmberObject from "@ember/object";
+import Mixin from "@ember/object/mixin";
+import { isEmpty } from "@ember/utils";
+import { setting } from "discourse/lib/computed";
 import User from "discourse/models/user";
 import discourseDebounce from "discourse-common/lib/debounce";
-import { observes } from "discourse-common/utils/decorators";
-
-export default apiInitializer("1.8.0", (api) => {
-  const siteSettings = api.container.lookup("service:site-settings");
+import discourseComputed from "discourse-common/utils/decorators";
+import I18n from "discourse-i18n";
 
 
-  // Prefilling the username based on the first name
-  api.modifyClass("component:modal/create-account", {
-    pluginId: "display-first-name-only",
+export default Mixin.create({
+  checkedUsername: null,
+  usernameValidationResult: null,
+  uniqueUsernameValidation: null,
+  maxUsernameLength: setting("max_username_length"),
+  minUsernameLength: setting("min_username_length"),
 
-    prefillUsername() {
-      // do nothing.
-    },
+  async fetchExistingUsername() {
+    const result = await User.checkUsername(null, this.accountEmail);
+    console.log(result);
+    if (
+      result.suggestion &&
+      (isEmpty(this.accountUsername) ||
+        this.accountUsername === this.get("authOptions.username"))
+    ) {
+      this.setProperties({
+        accountUsername: result.suggestion,
+        prefilledUsername: result.suggestion,
+      });
+    }
+  },
 
-    @observes("model.accountEmail", "model.accountUsername")
-    prefillUsernameFromName() {
-      if (this.prefilledUsername) {
-          console.log(this.model.accountUsername)
-        if (this.model.accountUsername === this.prefilledUsername) {
-          this.set("model.accountUsername", "");
-        }
-        this.set("prefilledUsername", null);
-      }
-      /* if (this.get("nameValidation.ok")) {
-        discourseDebounce(
-          this,
-          async () => {
-            const name = this.accountName.trim().split(/\s/)[0];
-            if (!name.length) {
-              return;
-            }
-            const result = await User.checkUsername(name, this.accountEmail);
+  @discourseComputed(
+    "usernameValidationResult",
+    "accountUsername",
+    "forceValidationReason"
+  )
+  usernameValidation() {
+    if (
+      this.usernameValidationResult &&
+      this.checkedUsername === this.accountUsername
+    ) {
+      return this.usernameValidationResult;
+    }
 
-            if (result.suggestion) {
-              this.setProperties({
-                accountUsername: result.suggestion,
-                prefilledUsername: result.suggestion,
-              });
-            } else {
-              this.setProperties({
-                accountUsername: name,
-                prefilledUsername: name,
-              });
-            }
-          },
-          500
-        );
-      } */
-    },
-  });
+    
 
+    if (result.shouldCheck) {
+      discourseDebounce(this, this.checkUsernameAvailability, 500);
+    }
+
+    return result;
+  },
+
+
+  async checkUsernameAvailability() {
+    const result = await User.checkUsername(
+      this.accountUsername,
+      this.accountEmail
+    );
+
+    if (this.isDestroying || this.isDestroyed) {
+      return;
+    }
+
+    this.set("checkedUsername", this.accountUsername);
+    this.set("isDeveloper", !!result.is_developer);
+  },
 });
