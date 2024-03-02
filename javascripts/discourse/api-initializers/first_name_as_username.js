@@ -11,8 +11,7 @@ export default apiInitializer("1.8.0", (api) => {
 
   // Prefilling the username based on the first name
   api.modifyClass("component:modal/create-account", {
-    pluginId: "display-first-name-only",
-
+    
     prefillUsername() {
       // do nothing.
     },
