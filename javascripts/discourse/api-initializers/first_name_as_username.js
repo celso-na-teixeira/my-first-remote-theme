@@ -4,6 +4,7 @@ import discourseDebounce from "discourse-common/lib/debounce";
 import { observes } from "discourse-common/utils/decorators";
 
 export default apiInitializer("1.8.0", (api) => {
+  console.log('testing');
   const siteSettings = api.container.lookup("service:site-settings");
 
   // Removes the number at the end of string
